@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2017, Hazelcast, Inc. All Rights Reserved.
+ * Copyright (c) 2008-2018, Hazelcast, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,11 @@
 import com.hazelcast.core.IMap;
 import com.hazelcast.jet.Jet;
 import com.hazelcast.jet.JetInstance;
-import com.hazelcast.jet.Job;
 import com.hazelcast.jet.Pipeline;
 import com.hazelcast.jet.Sinks;
 import com.hazelcast.jet.Sources;
 import com.hazelcast.jet.config.InstanceConfig;
 import com.hazelcast.jet.config.JetConfig;
-import com.hazelcast.jet.core.DAG;
-import com.hazelcast.jet.core.JobStatus;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -81,14 +78,7 @@ public class WordCount {
             System.out.print("\nCounting words... ");
             long start = System.nanoTime();
             Pipeline p = buildPipeline();
-            //In 0.5, you can convert from a Pipeline to a DAG.
-            DAG dag = p.toDag();
-            Job job = jet.newJob(dag);
-            //We now have JobStatus as part of our Job Lifecycle
-            System.out.println("Job Status: " + job.getStatus());
-            job.join();
-            JobStatus status = job.getStatus();
-            System.out.println("Job Status: " + status);
+            jet.newJob(p).join();
             System.out.print("done in " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start) + " milliseconds.");
             printResults();
             IMap<String, Long> counts = jet.getMap(COUNTS);

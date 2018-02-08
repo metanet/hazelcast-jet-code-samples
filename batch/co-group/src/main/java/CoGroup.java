@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2017, Hazelcast, Inc. All Rights Reserved.
+ * Copyright (c) 2008-2018, Hazelcast, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,7 +83,7 @@ public final class CoGroup {
                         .<Product>andAccumulate1((acc, product) -> acc.bag1().add(product))
                         .<Broker>andAccumulate2((acc, broker) -> acc.bag2().add(broker))
                         .andCombine(ThreeBags::combineWith)
-                        .andFinish(x -> x));
+                        .andIdentityFinish());
 
         // Store the results in the output map
         coGrouped.drainTo(Sinks.map(RESULT));
